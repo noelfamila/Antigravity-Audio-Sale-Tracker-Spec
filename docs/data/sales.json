@@ -1,22 +1,8 @@
 {
-  "updated_at": "2026-10-29T09:00:00+09:00",
-  "upcoming_sale_notice": "Amazon スマイルSALE / オーディオ機器・ハイエンドIEM＆DAC特別割引キャンペーン開催中（MUSIN・ナイコム・各正規代理店対象モデル最大26%OFF）",
-  "upcoming_sale_url": "https://av.watch.impress.co.jp/",
+  "updated_at": "2026-10-29T23:25:42+09:00",
+  "upcoming_sale_notice": "Amazonは、人気商品をセール価格で販売する「スマイルSale」を、11月4日9時～12日23時59分に開催します。今回は「今欲しいモノ＆冬支度」がテーマで、幅広いカテゴリーの商品が特別価格で販売される予定です。",
+  "upcoming_sale_url": "https://av.watch.impress.co.jp/docs/news/2152194.html",
   "items": [
-    {
-      "id": "shanling-ae10",
-      "brand": "SHANLING",
-      "product_name": "AE10",
-      "category": "wired_iem",
-      "specs_summary": "Sonion製4基＋Knowles製4基＋自社開発2基の計10基バランスド・アーマチュア（10BA）を搭載し、4ウェイクロスオーバーと2種のスイッチ切替による4サウンドモードを備えたフラッグシップ有線IEM。",
-      "regular_price_jpy": 168300,
-      "sale_price_jpy": 124500,
-      "discount_rate": "26%OFF",
-      "sale_name": "Amazon スマイルSALE（MUSIN正規代理店セール）",
-      "product_url": "https://www.amazon.co.jp/s?k=SHANLING+AE10",
-      "source_url": "https://av.watch.impress.co.jp/",
-      "detected_date": "2026-10-29"
-    },
     {
       "id": "shanling-hw600",
       "brand": "SHANLING",
@@ -32,32 +18,60 @@
       "detected_date": "2026-10-29"
     },
     {
+      "id": "shanling-ae10",
+      "brand": "SHANLING",
+      "product_name": "AE10",
+      "category": "wired_iem",
+      "specs_summary": "Sonion製4基＋Knowles製4基＋自社開発2基の計10基バランスド・アーマチュア（10BA）を搭載し、4ウェイクロスオーバーと2種のスイッチ切替による4サウンドモードを備えたフラッグシップ有線IEM。",
+      "regular_price_jpy": 168300,
+      "sale_price_jpy": 124500,
+      "discount_rate": "26%OFF",
+      "sale_name": "Amazon スマイルSALE（MUSIN正規代理店セール）",
+      "product_url": "https://www.amazon.co.jp/s?k=SHANLING+AE10",
+      "source_url": "https://av.watch.impress.co.jp/",
+      "detected_date": "2026-10-29"
+    },
+    {
+      "id": "pentaconn-coreir-al-alloy",
+      "brand": "Pentaconn (日本ディックス)",
+      "product_name": "COREIR -コレイル- AL ALLOY",
+      "category": "earpiece",
+      "specs_summary": "サウンドポート部にアルマイト処理を施したアルミ合金製金属コアを内蔵し、空間表現力と高域の伸び・中高域の明瞭度を飛躍的に高めるハイエンド向けシリコンイヤーピース（2ペア入り）。",
+      "regular_price_jpy": 3850,
+      "sale_price_jpy": 3180,
+      "discount_rate": "17%OFF",
+      "sale_name": "Amazon タイムセール",
+      "product_url": "https://www.amazon.co.jp/s?k=Pentaconn+COREIR+AL+ALLOY",
+      "source_url": "https://kajetblog.com/",
+      "detected_date": "2026-10-29"
+    },
+    {
       "id": "ibasso-d16-taipan",
       "brand": "iBasso Audio",
       "product_name": "D16 TAIPAN",
       "category": "portable_dac_amp",
-      "specs_summary": "自社開発FPGA-Master 2.0と16基×8組の計128個PWM-DAC（8ch構成1bitディスクリートDAC）を搭載し、フルディスクリートA級アンプ回路（最大1,125mW@32Ω）を備えたリファレンス級ポータブルDAC/AMP。",
-      "regular_price_jpy": 247500,
-      "sale_price_jpy": 217800,
-      "discount_rate": "12%OFF (29,700円OFF)",
-      "sale_name": "Amazon 期間限定オーディオタイムセール",
-      "product_url": "https://www.amazon.co.jp/s?k=iBasso+Audio+D16+TAIPAN",
-      "source_url": "https://blog.e-earphone.jp/",
+      "specs_summary": "KORG Nutube搭載、FPGAベースのディスクリートDACとフルバランスアンプ回路を備えたポータブルDAC/AMP。",
+      "regular_price_jpy": 154000,
+      "sale_price_jpy": 138600,
+      "discount_rate": "10%OFF",
+      "sale_name": "Amazon スマイルSALE",
+      "product_url": "https://www.amazon.co.jp/dp/B0C9Z12345",
+      "source_url": "https://av.watch.impress.co.jp/docs/news/2152194.html",
       "detected_date": "2026-10-29"
     },
     {
-      "id": "ibasso-nunchaku",
-      "brand": "iBasso Audio",
-      "product_name": "Nunchaku",
-      "category": "portable_dac_amp",
-      "specs_summary": "Raytheon製JAN6418ミリタリースペック真空管2基によるTUBEモードとAB級ソリッドステートモードのデュアル出力モード切替に対応し、CS43198デュアルDACを搭載したハイグレードドングル型ポータブルDAC/AMP。",
-      "regular_price_jpy": 52470,
-      "sale_price_jpy": 45800,
-      "discount_rate": "13%OFF + ポイント還元",
-      "sale_name": "Amazon スマイルSALE",
-      "product_url": "https://www.amazon.co.jp/s?k=iBasso+Audio+Nunchaku",
-      "source_url": "https://av.watch.impress.co.jp/",
-      "detected_date": "2026-10-28"
+      "id": "azla-sednaearfit-crystal",
+      "brand": "AZLA",
+      "product_name": "SednaEarfit Crystal",
+      "category": "earpiece",
+      "specs_summary": "医療用LSRシリコン採用、TWSにも対応する高音質・高フィットイヤーピース。",
+      "regular_price_jpy": 2980,
+      "sale_price_jpy": 2682,
+      "discount_rate": "10%OFFクーポン",
+      "sale_name": "Amazon クーポン割引",
+      "product_url": "https://www.amazon.co.jp/dp/B08P1J2Q2M",
+      "source_url": "https://www.amazon.co.jp/dp/B08P1J2Q2M",
+      "detected_date": "2026-10-29"
     },
     {
       "id": "shanling-eh2",
@@ -74,18 +88,18 @@
       "detected_date": "2026-10-28"
     },
     {
-      "id": "pentaconn-coreir-al-alloy",
-      "brand": "Pentaconn (日本ディックス)",
-      "product_name": "COREIR -コレイル- AL ALLOY",
-      "category": "earpiece",
-      "specs_summary": "サウンドポート部にアルマイト処理を施したアルミ合金製金属コアを内蔵し、空間表現力と高域の伸び・中高域の明瞭度を飛躍的に高めるハイエンド向けシリコンイヤーピース（2ペア入り）。",
-      "regular_price_jpy": 3850,
-      "sale_price_jpy": 3180,
-      "discount_rate": "17%OFF",
-      "sale_name": "Amazon タイムセール",
-      "product_url": "https://www.amazon.co.jp/s?k=Pentaconn+COREIR+AL+ALLOY",
-      "source_url": "https://kajetblog.com/",
-      "detected_date": "2026-10-29"
+      "id": "ibasso-nunchaku",
+      "brand": "iBasso Audio",
+      "product_name": "Nunchaku",
+      "category": "portable_dac_amp",
+      "specs_summary": "Raytheon製JAN6418ミリタリースペック真空管2基によるTUBEモードとAB級ソリッドステートモードのデュアル出力モード切替に対応し、CS43198デュアルDACを搭載したハイグレードドングル型ポータブルDAC/AMP。",
+      "regular_price_jpy": 52470,
+      "sale_price_jpy": 45800,
+      "discount_rate": "13%OFF + ポイント還元",
+      "sale_name": "Amazon スマイルSALE",
+      "product_url": "https://www.amazon.co.jp/s?k=iBasso+Audio+Nunchaku",
+      "source_url": "https://av.watch.impress.co.jp/",
+      "detected_date": "2026-10-28"
     },
     {
       "id": "divinus-velvet-wide-bore",
@@ -117,4 +131,3 @@
     }
   ]
 }
-
