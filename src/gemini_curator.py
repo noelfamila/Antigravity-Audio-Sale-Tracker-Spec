@@ -145,6 +145,53 @@ def _reconcile_prices(item: SaleItem) -> None:
         item.sale_price_jpy = int(round(item.regular_price_jpy * (1.0 - pct / 100.0)))
 
 
+def _verify_urls_and_sync_price(item: SaleItem) -> bool:
+    """product_url と source_url のリンク切れ(404)を検証し、Amazon商品ページから現在価格が取得できた場合は表示価格を同期する。"""
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+        ),
+        "Accept-Language": "ja-JP,ja;q=0.9",
+    }
+    with httpx.Client(
+        timeout=httpx.Timeout(HTTP_TIMEOUT_SECONDS),
+        follow_redirects=True,
+        headers=headers,
+    ) as client:
+        # 1. 情報元記事URLの疎通チェック
+        try:
+            s_resp = client.get(item.source_url, timeout=HTTP_TIMEOUT_SECONDS)
+            if s_resp.status_code in (404, 410):
+                logger.info("除外 (source_url が %d リンク切れ): %s", s_resp.status_code, item.source_url)
+                return False
+        except Exception as exc:
+            logger.debug("source_url 疎通確認スキップ (%s): %s", item.source_url, exc)
+
+        # 2. 商品ページURLの疎通＆実売価格同期チェック
+        try:
+            p_resp = client.get(item.product_url, timeout=HTTP_TIMEOUT_SECONDS)
+            if p_resp.status_code in (404, 410):
+                logger.info("除外 (product_url が %d リンク切れ): %s", p_resp.status_code, item.product_url)
+                return False
+            if p_resp.status_code == 200 and "amazon.co.jp" in str(p_resp.url):
+                price_m = re.search(r'class="a-price-whole"[^>]*>([0-9,]+)<', p_resp.text)
+                if price_m:
+                    live_price = int(price_m.group(1).replace(",", ""))
+                    if live_price > 0:
+                        item.sale_price_jpy = live_price
+                        if item.regular_price_jpy and item.regular_price_jpy > live_price:
+                            calc_pct = int(
+                                round((item.regular_price_jpy - live_price) / item.regular_price_jpy * 100)
+                            )
+                            if calc_pct > 0 and not item.discount_rate:
+                                item.discount_rate = f"{calc_pct}%OFF"
+        except Exception as exc:
+            logger.debug("product_url 疎通確認スキップ (%s): %s", item.product_url, exc)
+
+    return True
+
+
 def _validate_and_filter_items(items: list[SaleItem], today_str: str) -> list[SaleItem]:
     """Pydanticパース後のセーフティガード（URL正規化、価格整合性補正、5万円未満の非イヤーピースやワイヤレス混入を排除）"""
     wireless_ng_words = [
@@ -177,6 +224,10 @@ def _validate_and_filter_items(items: list[SaleItem], today_str: str) -> list[Sa
 
         # 通常価格と割引率の整合性補正
         _reconcile_prices(item)
+
+        # リンク切れ(404)チェック＆Amazon実売価格同期
+        if not _verify_urls_and_sync_price(item):
+            continue
 
         # イヤーピース以外のカテゴリはワイヤレス製品と5万円未満を厳格に除外
         if item.category != AudioCategory.EARPIECE:

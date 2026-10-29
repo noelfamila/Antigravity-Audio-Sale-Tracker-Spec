@@ -1,8 +1,36 @@
 {
-  "updated_at": "2026-10-29T23:55:00+09:00",
-  "upcoming_sale_notice": "株式会社MUSIN『Amazon オーディオセール』開催情報（SHANLING・iBasso Audio等の対象ハイエンド機器が最大25%OFF）",
+  "updated_at": "2026-10-30T07:20:00+09:00",
+  "upcoming_sale_notice": "株式会社MUSIN『Amazon オーディオセール』実績＆直近割引情報（SHANLING・iBasso Audio等の対象ハイエンド機器・定番イヤーピース）",
   "upcoming_sale_url": "https://musinltd.com/News/1471.html",
   "items": [
+    {
+      "id": "shanling-eh2",
+      "brand": "SHANLING",
+      "product_name": "EH2",
+      "category": "desktop_dac_amp",
+      "specs_summary": "自社開発24bit R2Rラダー型ディスクリートDACモジュールと高出力トランジスタアンプ回路（4.4mmバランス最大4,350mW@32Ω）、高域・低域アナログトーンコントロールを搭載した据え置き型DAC/ヘッドホンアンプ。",
+      "regular_price_jpy": 63360,
+      "sale_price_jpy": 53625,
+      "discount_rate": "15%OFF (大型セール時最大22%OFF)",
+      "sale_name": "Amazon MUSIN公式ストア 割引販売",
+      "product_url": "https://www.amazon.co.jp/dp/B0DV5BV77G",
+      "source_url": "https://prtimes.jp/main/html/rd/p/000000237.000139013.html",
+      "detected_date": "2026-10-30"
+    },
+    {
+      "id": "azla-sednaearfit-crystal-2",
+      "brand": "AZLA",
+      "product_name": "SednaEarfit Crystal 2 Standard (Mサイズ2ペア)",
+      "category": "earpiece",
+      "specs_summary": "ドイツ製プレミアムLSR（液体シリコンゴム）素材と独自のテーパード構造・一体型ハニカム構造コアレスワックスガードを搭載し、低圧迫と高い遮音性・解像度を両立した定番イヤーピース。",
+      "regular_price_jpy": 2750,
+      "sale_price_jpy": 2000,
+      "discount_rate": "27%OFF",
+      "sale_name": "Amazon 特価販売",
+      "product_url": "https://www.amazon.co.jp/dp/B0DJV9VM5F",
+      "source_url": "https://kajetblog.com/azla-sednaearfit-crystal-2/",
+      "detected_date": "2026-10-30"
+    },
     {
       "id": "shanling-ae10",
       "brand": "SHANLING",
@@ -10,12 +38,12 @@
       "category": "wired_iem",
       "specs_summary": "Sonion製4基＋Knowles製4基＋自社開発2基の計10基バランスド・アーマチュア（10BA）を搭載し、4ウェイクロスオーバーと2種のスイッチ切替による4サウンドモードを備えたフラッグシップ有線IEM。",
       "regular_price_jpy": 158400,
-      "sale_price_jpy": 118800,
-      "discount_rate": "25%OFF",
-      "sale_name": "Amazon MUSIN公式ストア オーディオセール",
+      "sale_price_jpy": 150480,
+      "discount_rate": "5%OFF (大型セール時25%OFF)",
+      "sale_name": "Amazon MUSIN公式ストア 割引販売",
       "product_url": "https://www.amazon.co.jp/dp/B0DNJMSZZN",
       "source_url": "https://musinltd.com/News/1471.html",
-      "detected_date": "2026-10-29"
+      "detected_date": "2026-10-30"
     },
     {
       "id": "shanling-hw600",
@@ -24,12 +52,12 @@
       "category": "wired_headphone",
       "specs_summary": "110×86mm大口径平面磁界駆動（プラナーマグネティック）ドライバーと航空機グレードアルミ合金ハウジングを採用した開放型ハイエンド有線ヘッドホン。デュアル3.5mm着脱式ケーブル（4.4mmバランス標準付属）対応。",
       "regular_price_jpy": 175230,
-      "sale_price_jpy": 131423,
-      "discount_rate": "25%OFF",
-      "sale_name": "Amazon MUSIN公式ストア オーディオセール",
+      "sale_price_jpy": 166468,
+      "discount_rate": "5%OFF (大型セール時25%OFF)",
+      "sale_name": "Amazon MUSIN公式ストア 割引販売",
       "product_url": "https://www.amazon.co.jp/dp/B0DNHDDH4C",
       "source_url": "https://musinltd.com/News/1471.html",
-      "detected_date": "2026-10-29"
+      "detected_date": "2026-10-30"
     },
     {
       "id": "ibasso-d16-taipan",
@@ -38,12 +66,12 @@
       "category": "portable_dac_amp",
       "specs_summary": "自社開発FPGA-Master 2.0と16基×8組の計128個PWM-DAC（8ch構成1bitディスクリートDAC）を搭載し、フルディスクリートA級アンプ回路（最大1,125mW@32Ω）を備えたリファレンス級ポータブルDAC/AMP。",
       "regular_price_jpy": 247500,
-      "sale_price_jpy": 198000,
-      "discount_rate": "20%OFF",
-      "sale_name": "Amazon MUSIN公式ストア オーディオセール",
+      "sale_price_jpy": 235125,
+      "discount_rate": "5%OFF (大型セール時20%OFF)",
+      "sale_name": "Amazon MUSIN公式ストア 割引販売",
       "product_url": "https://www.amazon.co.jp/dp/B0HFRD18TB",
       "source_url": "https://musinltd.com/News/1471.html",
-      "detected_date": "2026-10-29"
+      "detected_date": "2026-10-30"
     },
     {
       "id": "ibasso-nunchaku",
@@ -52,37 +80,23 @@
       "category": "portable_dac_amp",
       "specs_summary": "Raytheon製JAN6418ミリタリースペック真空管2基によるTUBEモードとAB級ソリッドステートモードのデュアル出力モード切替に対応し、CS43198デュアルDACを搭載したハイグレードドングル型ポータブルDAC/AMP。",
       "regular_price_jpy": 52470,
-      "sale_price_jpy": 40402,
-      "discount_rate": "23%OFF",
-      "sale_name": "Amazon MUSIN公式ストア オーディオセール",
+      "sale_price_jpy": 49800,
+      "discount_rate": "5%OFF (大型セール時23%OFF)",
+      "sale_name": "Amazon MUSIN公式ストア 割引販売",
       "product_url": "https://www.amazon.co.jp/dp/B0DYKBNBSB",
       "source_url": "https://musinltd.com/News/1471.html",
-      "detected_date": "2026-10-29"
-    },
-    {
-      "id": "shanling-eh2",
-      "brand": "SHANLING",
-      "product_name": "EH2",
-      "category": "desktop_dac_amp",
-      "specs_summary": "自社開発24bit R2Rラダー型ディスクリートDACモジュールと高出力トランジスタアンプ回路（4.4mmバランス最大4,350mW@32Ω）、高域・低域アナログトーンコントロールを搭載した据え置き型DAC/ヘッドホンアンプ。",
-      "regular_price_jpy": 63360,
-      "sale_price_jpy": 49421,
-      "discount_rate": "22%OFF",
-      "sale_name": "Amazon MUSIN公式ストア オーディオセール",
-      "product_url": "https://www.amazon.co.jp/dp/B0DV5BV77G",
-      "source_url": "https://prtimes.jp/main/html/rd/p/000000237.000139013.html",
-      "detected_date": "2026-10-28"
+      "detected_date": "2026-10-30"
     },
     {
       "id": "pentaconn-coreir-al-alloy",
       "brand": "Pentaconn (日本ディックス)",
-      "product_name": "COREIR -コレイル- AL ALLOY (PTM02)",
+      "product_name": "COREIR -コレイル- AL ALLOY (L・Mセット PTM02)",
       "category": "earpiece",
       "specs_summary": "サウンドポート部に黒アルマイト処理を施したアルミ合金製金属コアを内蔵し、空間表現力と高域の伸び・中高域の明瞭度を飛躍的に高めるハイエンド向けシリコンイヤーピース（2ペア入り）。",
       "regular_price_jpy": 3850,
-      "sale_price_jpy": 3500,
-      "discount_rate": "9%OFF",
-      "sale_name": "Amazon 割引販売",
+      "sale_price_jpy": 3850,
+      "discount_rate": "ポイント還元対象",
+      "sale_name": "Amazon 正規取扱販売",
       "product_url": "https://www.amazon.co.jp/dp/B0CZ3GZGBP",
       "source_url": "https://kajetblog.com/pentaconn-coreir-al-alloy-2/",
       "detected_date": "2026-10-29"
@@ -90,7 +104,7 @@
     {
       "id": "pentaconn-coreir-titanium-alloy",
       "brand": "Pentaconn (日本ディックス)",
-      "product_name": "COREIR -コレイル- Titanium ALLOY (PTM03)",
+      "product_name": "COREIR -コレイル- Titanium ALLOY (Mサイズ PTM03)",
       "category": "earpiece",
       "specs_summary": "高硬度なチタン合金コアを内蔵したコレイル上位モデル。アルミや真鍮モデルとは異なる高い応答性とクリアな空間描写力を備えたハイブリッドイヤーピース（1ペア入り）。",
       "regular_price_jpy": 2970,
@@ -100,20 +114,6 @@
       "product_url": "https://www.amazon.co.jp/dp/B0H869TWJB",
       "source_url": "https://av.watch.impress.co.jp/docs/news/2128472.html",
       "detected_date": "2026-10-28"
-    },
-    {
-      "id": "azla-sednaearfit-crystal-2",
-      "brand": "AZLA",
-      "product_name": "SednaEarfit Crystal 2 Standard (2ペア)",
-      "category": "earpiece",
-      "specs_summary": "ドイツ製プレミアムLSR（液体シリコンゴム）素材と独自のテーパード構造・一体型ハニカム構造コアレスワックスガードを搭載し、低圧迫と高い遮音性・解像度を両立した定番イヤーピース。",
-      "regular_price_jpy": 2750,
-      "sale_price_jpy": 2475,
-      "discount_rate": "10%OFF",
-      "sale_name": "Amazon 割引販売",
-      "product_url": "https://www.amazon.co.jp/dp/B0DJV9VM5F",
-      "source_url": "https://kajetblog.com/azla-sednaearfit-crystal-2/",
-      "detected_date": "2026-10-27"
     }
   ]
 }
