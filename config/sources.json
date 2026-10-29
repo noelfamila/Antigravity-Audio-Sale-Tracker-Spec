@@ -1,0 +1,99 @@
+{
+  "rss_feeds": [
+    {
+      "name": "AV Watch",
+      "url": "https://av.watch.impress.co.jp/data/rss/1.0/avw/feed.rdf",
+      "enabled": true
+    },
+    {
+      "name": "PHILE WEB",
+      "url": "https://www.phileweb.com/rss.php",
+      "enabled": true
+    },
+    {
+      "name": "e☆イヤホン ブログ",
+      "url": "https://blog.e-earphone.jp/feed",
+      "enabled": true
+    },
+    {
+      "name": "カジェログ (kajetblog)",
+      "url": "https://kajetblog.com/feed/",
+      "enabled": true
+    },
+    {
+      "name": "PR TIMES (テクノロジー・オーディオ関連)",
+      "url": "https://prtimes.jp/technology.rdf",
+      "enabled": true
+    },
+    {
+      "name": "ヲタクトイ (Wotakutoy / オーディオレビュー)",
+      "url": "https://wotakutoy.com/feed/",
+      "enabled": true
+    }
+  ],
+  "keywords_filter": [
+    "セール",
+    "SALE",
+    "割引",
+    "OFF",
+    "クーポン",
+    "プライム",
+    "タイムセール",
+    "スマイル",
+    "ブラックフライデー",
+    "感謝祭",
+    "値下げ",
+    "特価",
+    "キャンペーン",
+    "Amazon",
+    "アマゾン",
+    "イヤホン",
+    "IEM",
+    "ヘッドホン",
+    "ヘッドフォン",
+    "DAC",
+    "アンプ",
+    "AMP",
+    "イヤーピース",
+    "イヤピ",
+    "リケーブル",
+    "SHANLING",
+    "iBasso",
+    "FiiO",
+    "SENNHEISER",
+    "ゼンハイザー",
+    "final",
+    "AZLA",
+    "SpinFit",
+    "Divinus",
+    "Pentaconn",
+    "ELETECH",
+    "Aune",
+    "Topping",
+    "SMSL",
+    " HIFIMAN",
+    "Unique Melody",
+    "64 Audio",
+    "Campfire Audio",
+    "Moondrop",
+    "水月雨",
+    "THIEAUDIO",
+    "DUNU",
+    "AFUL",
+    "LETSHUOER",
+    "Questyle",
+    "Cayin",
+    "Chord",
+    "iFi audio",
+    "LUXURY&PRECISION"
+  ],
+  "search_queries": [
+    "Amazon.co.jp 有線イヤホン 5万円以上 セール 割引 クーポン (SHANLING OR iBasso OR FiiO OR SENNHEISER OR HIFIMAN OR THIEAUDIO OR DUNU OR final)",
+    "Amazon.co.jp 有線ヘッドホン 5万円以上 セール 割引 (SENNHEISER OR HIFIMAN OR SHANLING OR Beyerdynamic OR Focal OR Meze Audio)",
+    "Amazon.co.jp 据え置き ポータブル DAC ヘッドホンアンプ 5万円以上 セール (iBasso OR SHANLING OR FiiO OR iFi audio OR Topping OR SMSL OR Questyle OR Cayin)",
+    "Amazon.co.jp イヤーピース セール 割引 クーポン (AZLA SednaEarfit OR SpinFit OR Divinus Velvet OR Pentaconn COREIR OR final TYPE E OR ELETECH BAROQUE)"
+  ],
+  "max_rss_items_per_feed": 30,
+  "max_total_snippets_for_prompt": 60,
+  "max_seen_urls_history": 1000
+}

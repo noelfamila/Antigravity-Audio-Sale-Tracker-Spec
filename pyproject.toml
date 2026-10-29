@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "audio-sale-tracker"
+version = "1.0.0"
+description = "Amazon.co.jp ハイエンドオーディオ機器＆イヤーピース セール自動収集・精査パイプライン"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "google-genai>=1.0.0",
+    "pydantic>=2.6.0",
+    "httpx>=0.27.0",
+    "feedparser>=6.0.11",
+]
+
+[project.scripts]
+audio-sale-tracker = "src.main:main"

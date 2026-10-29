@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Audio Sale Tracker | Amazon ハイエンドオーディオ＆イヤーピース セール精査ダッシュボード</title>
+  <meta name="description" content="Amazon.co.jpの5万円以上ハイエンド有線イヤホン・ヘッドホン・据え置き/ポータブルDAC/AMPおよび全価格帯イヤーピースのセール・割引情報をAIで毎日自動収集・精査するダッシュボード。" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand-area">
+        <div class="brand-eyebrow">AMAZON.CO.JP HIGH-END AUDIO &amp; EARPIECE CURATOR</div>
+        <h1 class="site-title">Audio Sale Tracker</h1>
+        <p class="site-subtitle">
+          有線IEM・有線ヘッドホン・据置/ポータブルDAC/AMP（<strong>50,000円〜</strong>）＆イヤーピース（<strong>全価格帯</strong>）特化セール監視ボード
+        </p>
+      </div>
+      <div class="meta-area">
+        <div class="update-badge" aria-live="polite">
+          <span class="pulse-dot" aria-hidden="true"></span>
+          <span class="update-label">最終更新:</span>
+          <time id="updated-at">読み込み中...</time>
+        </div>
+        <div class="policy-tags">
+          <span class="policy-tag">ワイヤレス完全除外</span>
+          <span class="policy-tag">5万円以上有線機限定</span>
+          <span class="policy-tag">イヤピ全価格対象</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 大型セール開催情報・次回予告バナー -->
+    <div id="sale-banner" class="sale-banner hidden" role="region" aria-label="大型セール開催情報">
+      <div class="container sale-banner-inner">
+        <div class="sale-banner-content">
+          <span class="sale-banner-tag">SALE NOTICE</span>
+          <p id="sale-banner-text" class="sale-banner-text"></p>
+        </div>
+        <a id="sale-banner-link" class="sale-banner-btn" href="#" target="_blank" rel="noopener noreferrer">
+          予告・特設記事を見る ↗
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-content">
+    <!-- フィルタ・検索・ソートバー -->
+    <section class="controls-panel" aria-label="絞り込みと並び替え">
+      <div class="category-tabs" id="category-tabs" role="tablist" aria-label="製品カテゴリ切り替え">
+        <button type="button" class="category-tab active" data-category="all" role="tab" aria-selected="true">
+          すべて <span class="tab-count" data-count-for="all">0</span>
+        </button>
+        <button type="button" class="category-tab" data-category="wired_iem" role="tab" aria-selected="false">
+          有線イヤホン (5万円〜) <span class="tab-count" data-count-for="wired_iem">0</span>
+        </button>
+        <button type="button" class="category-tab" data-category="wired_headphone" role="tab" aria-selected="false">
+          有線ヘッドホン (5万円〜) <span class="tab-count" data-count-for="wired_headphone">0</span>
+        </button>
+        <button type="button" class="category-tab" data-category="desktop_dac_amp" role="tab" aria-selected="false">
+          据え置きDAC/AMP (5万円〜) <span class="tab-count" data-count-for="desktop_dac_amp">0</span>
+        </button>
+        <button type="button" class="category-tab" data-category="portable_dac_amp" role="tab" aria-selected="false">
+          ポータブルDAC/AMP (5万円〜) <span class="tab-count" data-count-for="portable_dac_amp">0</span>
+        </button>
+        <button type="button" class="category-tab" data-category="earpiece" role="tab" aria-selected="false">
+          イヤーピース (全価格帯) <span class="tab-count" data-count-for="earpiece">0</span>
+        </button>
+      </div>
+
+      <div class="filter-toolbar">
+        <div class="search-box-wrapper">
+          <label for="search-input" class="sr-only">フリーワード検索</label>
+          <input
+            type="search"
+            id="search-input"
+            class="search-input"
+            placeholder="ブランド名・型番・DACチップ・ドライバー構成で検索（例: SHANLING, R2R, 10BA, 真空管, LSR）..."
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="sort-wrapper">
+          <label for="sort-select" class="sort-label">並び替え:</label>
+          <select id="sort-select" class="sort-select">
+            <option value="newest">新着順（検出日が新しい順）</option>
+            <option value="discount_desc">割引率が高い順</option>
+            <option value="price_desc">価格が高い順</option>
+            <option value="price_asc">価格が安い順</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <p id="result-summary" class="result-summary">製品データを読み込んでいます...</p>
+      </div>
+    </section>
+
+    <!-- 製品カード一覧グリッド -->
+    <section aria-label="セール対象製品一覧">
+      <div id="cards-grid" class="cards-grid"></div>
+      <div id="empty-state" class="empty-state hidden">
+        <p class="empty-title">条件に一致するセール製品が見つかりませんでした。</p>
+        <p class="empty-desc">検索キーワードやカテゴリタブを変更してお試しください。</p>
+        <button type="button" id="reset-filters-btn" class="reset-btn">フィルタをリセット</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>
+        <strong>Audio Sale Tracker</strong> — Powered by GitHub Actions, GitHub Pages &amp; Gemini API (Grounding with Google Search + Structured Outputs).
+      </p>
+      <p class="footer-note">
+        ※ 価格・在庫・クーポン適用条件は変動する場合があります。ご購入前に必ずリンク先のAmazon商品ページまたは公式情報元記事にて最新価格をご確認ください。
+      </p>
+    </div>
+  </footer>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
+
