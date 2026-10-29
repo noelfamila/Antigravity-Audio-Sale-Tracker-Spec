@@ -146,7 +146,7 @@ def _reconcile_prices(item: SaleItem) -> None:
 
 
 def _verify_urls_and_sync_price(item: SaleItem) -> bool:
-    """product_url と source_url のリンク切れ(404)を検証し、Amazon商品ページから現在価格が取得できた場合は表示価格を同期する。"""
+    """product_url と source_url のリンク切れ(404/無効ページ)を厳格に検証し、Amazon商品ページの現在価格と完全同期する。"""
     headers = {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -162,19 +162,28 @@ def _verify_urls_and_sync_price(item: SaleItem) -> bool:
         # 1. 情報元記事URLの疎通チェック
         try:
             s_resp = client.get(item.source_url, timeout=HTTP_TIMEOUT_SECONDS)
-            if s_resp.status_code in (404, 410):
-                logger.info("除外 (source_url が %d リンク切れ): %s", s_resp.status_code, item.source_url)
+            if s_resp.status_code >= 400:
+                logger.info("除外 (source_url が HTTP %d エラー): %s", s_resp.status_code, item.source_url)
                 return False
         except Exception as exc:
-            logger.debug("source_url 疎通確認スキップ (%s): %s", item.source_url, exc)
+            logger.info("除外 (source_url 接続失敗: %s): %s", item.source_url, exc)
+            return False
 
-        # 2. 商品ページURLの疎通＆実売価格同期チェック
+        # 2. 商品ページURLの疎通＆実売価格同期チェック（架空ASINによる404や検索結果画面へのリダイレクトを完全排除）
         try:
             p_resp = client.get(item.product_url, timeout=HTTP_TIMEOUT_SECONDS)
-            if p_resp.status_code in (404, 410):
-                logger.info("除外 (product_url が %d リンク切れ): %s", p_resp.status_code, item.product_url)
+            final_p_url = str(p_resp.url)
+            if p_resp.status_code >= 400:
+                logger.info("除外 (product_url が HTTP %d 無効ページ): %s", p_resp.status_code, item.product_url)
                 return False
-            if p_resp.status_code == 200 and "amazon.co.jp" in str(p_resp.url):
+            if "amazon.co.jp/s?" in final_p_url or "amazon.co.jp/s/" in final_p_url:
+                logger.info("除外 (product_url が検索画面へ遷移): %s", final_p_url)
+                return False
+            if "申し訳ございません。入力されたウェブアドレスは当社サイトの有効なページではないか" in p_resp.text:
+                logger.info("除外 (Amazon無効アドレスエラー画面): %s", item.product_url)
+                return False
+
+            if p_resp.status_code == 200 and "amazon.co.jp" in final_p_url:
                 price_m = re.search(r'class="a-price-whole"[^>]*>([0-9,]+)<', p_resp.text)
                 if price_m:
                     live_price = int(price_m.group(1).replace(",", ""))
@@ -184,10 +193,11 @@ def _verify_urls_and_sync_price(item: SaleItem) -> bool:
                             calc_pct = int(
                                 round((item.regular_price_jpy - live_price) / item.regular_price_jpy * 100)
                             )
-                            if calc_pct > 0 and not item.discount_rate:
+                            if calc_pct > 0:
                                 item.discount_rate = f"{calc_pct}%OFF"
         except Exception as exc:
-            logger.debug("product_url 疎通確認スキップ (%s): %s", item.product_url, exc)
+            logger.info("除外 (product_url 接続失敗: %s): %s", item.product_url, exc)
+            return False
 
     return True
 

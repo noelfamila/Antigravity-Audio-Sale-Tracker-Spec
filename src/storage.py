@@ -107,8 +107,12 @@ def update_sales_database(
     """
     current_db = load_sales_database(sales_json_path)
 
-    # 既存アイテムをIDマップ化（新規検出分があれば最新情報で上書き）
-    merged_by_id: dict[str, SaleItem] = {item.id: item for item in current_db.items}
+    # 既存アイテムをIDマップ化（検索結果URLなどの旧無効データは除外し、新規検出分があれば最新情報で上書き）
+    merged_by_id: dict[str, SaleItem] = {
+        item.id: item
+        for item in current_db.items
+        if "amazon.co.jp/s?" not in item.product_url and "amazon.co.jp/s/" not in item.product_url
+    }
     for new_item in curation.items:
         merged_by_id[new_item.id] = new_item
 
