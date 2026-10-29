@@ -5,21 +5,26 @@ import os
 import re
 from datetime import datetime, timedelta, timezone
 from typing import Any
+from urllib.parse import urlparse
 
+import httpx
 from google import genai
 from google.genai import types
 
 from src.models import AudioCategory, CurationResponse, SaleItem
-from src.rss_fetcher import RssArticleSnippet
+from src.rss_fetcher import HTTP_TIMEOUT_SECONDS, RssArticleSnippet
 
 logger = logging.getLogger(__name__)
 
 JST = timezone(timedelta(hours=9))
 HIGH_END_MIN_PRICE_JPY = 50_000
 
+ASIN_EXTRACTOR = re.compile(r"/(?:dp|gp/product)/([A-Z0-9]{10})", re.IGNORECASE)
+
 SYSTEM_INSTRUCTION = """\
 あなたはAmazon.co.jpのハイエンドオーディオ機器およびイヤーピース専門のセール情報キュレーターです。
-提供されたRSS記事スニペット一覧と、Google検索グラウンディング（Grounding with Google Search）の結果を組み合わせて、
+提供されたRSS記事スニペット一覧（および記事内から抽出されたAmazon直リンク）と、
+Google検索グラウンディング（Grounding with Google Search）の結果を組み合わせて、
 現在開催中または直近で発表されたAmazon.co.jpのセール・割引・クーポン対象製品を抽出・精査してください。
 
 【厳守すべきフィルタリング条件（精査ルール）】
@@ -42,12 +47,16 @@ SYSTEM_INSTRUCTION = """\
 - `earpiece` 以外のカテゴリで、通常価格・セール価格ともに 50,000円未満の低価格・エントリー〜ミドル機は **すべて除外** してください。
 - DAP（デジタルオーディオプレーヤー単体）やケーブル単体は、上記5カテゴリに該当しないため除外してください。
 
-【出力データ作成ルール】
-- `id`: ブランド名と型番から英小文字とハイフンのみで一意のslugを生成してください（例: `shanling-ae10`, `ibasso-d16-taipan`, `azla-sednaearfit-crystal-2`）。
-- `specs_summary`: ドライバー構成、搭載DACチップ、アンプ回路、出力端子（4.4mmバランス等）、イヤーピース素材などの主要スペックを1〜2文で簡潔・正確に要約してください。
-- `product_url`: Amazon.co.jpの商品ページURL（`https://www.amazon.co.jp/...`）または代理店・メーカー公式ページURLを設定してください。
-- `source_url`: セール情報の根拠となった記事・プレスリリースのURLを設定してください。
-- `detected_date`: 検出日（YYYY-MM-DD形式）を設定してください。
+【URLおよび価格の厳密性ルール（最重要）】
+- `product_url`:
+  - 必ず個別製品のAmazon商品ページ直リンク（`https://www.amazon.co.jp/dp/B0...` または記事内の `https://amzn.asia/d/...`）を設定してください。
+  - `https://www.amazon.co.jp/s?k=...` のようなAmazon検索結果一覧ページのURLは設定しないでください。
+- `source_url`:
+  - 必ずセール情報の根拠となった個別記事・プレスリリースの完全なURL（例: `https://musinltd.com/News/1471.html` や `https://av.watch.impress.co.jp/docs/news/...`）を設定してください。
+  - サイトのトップページ（`https://av.watch.impress.co.jp/` など）だけを `source_url` に設定することは厳禁です。
+- `regular_price_jpy` / `sale_price_jpy` / `discount_rate`:
+  - 記事や公式発表に記載されている正確な金額・割引率と完全に一致させてください（架空の価格を推測・捏造しないこと）。
+  - 通常価格と割引率（例: 25%OFF）が判明している場合は、計算が整合するセール価格を設定してください。
 """
 
 
@@ -87,8 +96,57 @@ def _slugify(brand: str, product_name: str, existing_id: str = "") -> str:
     return slug or "audio-item"
 
 
+def _normalize_amazon_product_url(url: str) -> str:
+    """短縮URL (amzn.asia / amzn.to) を展開し、Amazon商品ページURLを正規の https://www.amazon.co.jp/dp/<ASIN> に整形する。"""
+    clean_url = url.strip()
+    if not clean_url:
+        return clean_url
+
+    # 短縮URLの場合はリダイレクト先を解決 (timeout=15.0)
+    if re.match(r"^https?://amzn\.(?:asia/d|to)/", clean_url, re.IGNORECASE):
+        try:
+            with httpx.Client(
+                timeout=httpx.Timeout(HTTP_TIMEOUT_SECONDS),
+                follow_redirects=True,
+                headers={"User-Agent": "Mozilla/5.0"},
+            ) as client:
+                resp = client.get(clean_url, timeout=HTTP_TIMEOUT_SECONDS)
+                clean_url = str(resp.url)
+        except Exception as exc:
+            logger.debug("短縮URLの展開に失敗 (%s): %s", clean_url, exc)
+
+    asin_match = ASIN_EXTRACTOR.search(clean_url)
+    if asin_match:
+        asin = asin_match.group(1).upper()
+        return f"https://www.amazon.co.jp/dp/{asin}"
+
+    return clean_url
+
+
+def _is_top_page_only_url(url: str) -> bool:
+    try:
+        parsed = urlparse(url.strip())
+        path = (parsed.path or "").strip("/")
+        return not path and not parsed.query
+    except Exception:
+        return True
+
+
+def _reconcile_prices(item: SaleItem) -> None:
+    """通常価格と割引率（%OFF）からセール価格の未入力や計算ズレを補正する。"""
+    pct_match = re.search(r"(\d+(?:\.\d+)?)\s*%\s*OFF", item.discount_rate or "", re.IGNORECASE)
+    if not pct_match:
+        return
+    pct = float(pct_match.group(1))
+    if not (0 < pct < 95):
+        return
+
+    if item.regular_price_jpy and item.regular_price_jpy > 0 and item.sale_price_jpy is None:
+        item.sale_price_jpy = int(round(item.regular_price_jpy * (1.0 - pct / 100.0)))
+
+
 def _validate_and_filter_items(items: list[SaleItem], today_str: str) -> list[SaleItem]:
-    """Pydanticパース後のセーフティガード（5万円未満の非イヤーピースやワイヤレス混入をコード側でも排除）"""
+    """Pydanticパース後のセーフティガード（URL正規化、価格整合性補正、5万円未満の非イヤーピースやワイヤレス混入を排除）"""
     wireless_ng_words = [
         "完全ワイヤレス",
         "ワイヤレスイヤホン",
@@ -96,6 +154,7 @@ def _validate_and_filter_items(items: list[SaleItem], today_str: str) -> list[Sa
         "bluetoothイヤホン",
         "bluetoothヘッドホン",
         "ノイキャンワイヤレス",
+        "bluetoothレシーバー",
     ]
     valid_items: list[SaleItem] = []
 
@@ -103,6 +162,21 @@ def _validate_and_filter_items(items: list[SaleItem], today_str: str) -> list[Sa
         item.id = _slugify(item.brand, item.product_name, item.id)
         if not item.detected_date or not re.match(r"^\d{4}-\d{2}-\d{2}$", item.detected_date):
             item.detected_date = today_str
+
+        # Amazon商品URLの正規化（/dp/ASIN 形式へ統一）
+        item.product_url = _normalize_amazon_product_url(item.product_url)
+
+        # 検索結果URL (/s?k=...) やトップページのみの不完全なURLは除外
+        if "amazon.co.jp/s?" in item.product_url or "amazon.co.jp/s/" in item.product_url:
+            logger.info("除外 (個別商品ページではなく検索URLのため): %s %s (%s)", item.brand, item.product_name, item.product_url)
+            continue
+
+        if _is_top_page_only_url(item.source_url):
+            logger.info("除外 (情報元記事URLがトップページのみのため): %s %s (%s)", item.brand, item.product_name, item.source_url)
+            continue
+
+        # 通常価格と割引率の整合性補正
+        _reconcile_prices(item)
 
         # イヤーピース以外のカテゴリはワイヤレス製品と5万円未満を厳格に除外
         if item.category != AudioCategory.EARPIECE:
@@ -163,7 +237,7 @@ def curate_sales_with_gemini(
                 tools=[{"google_search": {}}],
                 response_mime_type="application/json",
                 response_schema=CurationResponse,
-                temperature=0.2,
+                temperature=0.1,
             ),
         )
         if response.parsed is not None and isinstance(response.parsed, CurationResponse):
@@ -179,8 +253,6 @@ def curate_sales_with_gemini(
 
     except Exception as first_exc:
         # フォールバック（最大2回目まで）:
-        # モデルやAPIエンドポイント側で tools=[{"google_search": {}}] と response_mime_type="application/json" の
-        # 同時指定が拒否された場合、またはJSONパースに失敗した場合に構造化出力のみで整形を行う（合計最大2回）
         logger.warning(
             "1回目のGemini呼び出しで例外が発生したためフォールバックを実行します (2/2): %s",
             first_exc,

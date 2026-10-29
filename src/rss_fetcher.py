@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 import feedparser
@@ -18,8 +18,14 @@ DEFAULT_HEADERS = {
         "Mozilla/5.0 (compatible; AudioSaleTrackerBot/1.0; "
         "+https://github.com/audio-sale-tracker)"
     ),
-    "Accept": "application/rss+xml, application/rdf+xml, application/atom+xml, application/xml, text/xml;q=0.9, */*;q=0.8",
+    "Accept": "application/rss+xml, application/rdf+xml, application/atom+xml, application/xml, text/xml, text/html;q=0.9, */*;q=0.8",
 }
+
+AMAZON_LINK_PATTERN = re.compile(
+    r"https?://(?:www\.)?amazon\.co\.jp/(?:[^\s\"'<>]*?dp/[A-Z0-9]{10}|gp/product/[A-Z0-9]{10})"
+    r"|https?://amzn\.(?:asia/d|to)/[A-Za-z0-9]+",
+    re.IGNORECASE,
+)
 
 
 @dataclass
@@ -29,17 +35,23 @@ class RssArticleSnippet:
     url: str
     published: str
     summary: str
+    extracted_amazon_links: list[str] = field(default_factory=list)
 
     def to_prompt_line(self, index: int) -> str:
         clean_summary = re.sub(r"<[^>]+>", " ", self.summary)
         clean_summary = re.sub(r"\s+", " ", clean_summary).strip()
-        if len(clean_summary) > 280:
-            clean_summary = clean_summary[:280] + "..."
+        if len(clean_summary) > 350:
+            clean_summary = clean_summary[:350] + "..."
+        links_str = (
+            "\n    記事内Amazon商品リンク: " + ", ".join(self.extracted_amazon_links[:10])
+            if self.extracted_amazon_links
+            else ""
+        )
         return (
             f"[{index}] 媒体: {self.source_name} | 公開日: {self.published}\n"
             f"    タイトル: {self.title}\n"
-            f"    URL: {self.url}\n"
-            f"    概要: {clean_summary}"
+            f"    記事URL (source_url): {self.url}\n"
+            f"    概要: {clean_summary}{links_str}"
         )
 
 
@@ -48,6 +60,22 @@ def _matches_keywords(text: str, keywords: list[str]) -> bool:
         return True
     lowered = text.lower()
     return any(kw.strip().lower() in lowered for kw in keywords if kw.strip())
+
+
+def _enrich_snippet_from_article(client: httpx.Client, snippet: RssArticleSnippet) -> None:
+    """記事本文（メディア・PR記事）からAmazon商品ページ直リンク（/dp/ASIN や amzn.asia）と価格記述を抽出する。
+    ※Amazon自体のスクレイピングは行わず、メディア記事内のリンク抽出のみを timeout=15.0 で安全に行う。
+    """
+    try:
+        resp = client.get(snippet.url, timeout=HTTP_TIMEOUT_SECONDS)
+        if resp.status_code != 200:
+            return
+        html = resp.text
+        found_links = list(dict.fromkeys(AMAZON_LINK_PATTERN.findall(html)))
+        if found_links:
+            snippet.extracted_amazon_links = found_links[:12]
+    except Exception as exc:
+        logger.debug("記事本文の補助リンク抽出をスキップ (%s): %s", snippet.url, exc)
 
 
 def fetch_unread_rss_snippets(
@@ -105,15 +133,14 @@ def fetch_unread_rss_snippets(
 
                     combined_text = f"{title} {summary}"
                     if _matches_keywords(combined_text, keywords):
-                        collected.append(
-                            RssArticleSnippet(
-                                source_name=name,
-                                title=title,
-                                url=link,
-                                published=published,
-                                summary=summary,
-                            )
+                        snippet = RssArticleSnippet(
+                            source_name=name,
+                            title=title,
+                            url=link,
+                            published=published,
+                            summary=summary,
                         )
+                        collected.append(snippet)
                         feed_hit_count += 1
 
                     newly_checked_urls.append(link)
@@ -129,7 +156,11 @@ def fetch_unread_rss_snippets(
                 logger.warning("RSS取得失敗 (スキップして継続): %s (%s) - %s", name, url, exc)
                 continue
 
-    if len(collected) > max_total:
-        collected = collected[:max_total]
+        if len(collected) > max_total:
+            collected = collected[:max_total]
+
+        # 上位候補記事から記事内のAmazon直リンク（/dp/ASIN 等）を事前抽出
+        for snippet in collected[:15]:
+            _enrich_snippet_from_article(client, snippet)
 
     return collected, newly_checked_urls
